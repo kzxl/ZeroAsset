@@ -37,5 +37,20 @@ namespace ZeroAsset.Tests
             Assert.NotEmpty(keyCopy1);
             Assert.NotEqual(keyMaster, keyCopy1);
         }
+
+        [Fact]
+        public void Test_AssetCuration_GeneratesSortableUlid()
+        {
+            var c1 = new AssetCuration(5);
+            var c2 = new AssetCuration(4);
+
+            Assert.NotEqual(ZeroPrimitives.Core.Identifiers.FastUlid.Empty, c1.AssetId);
+            Assert.NotEqual(ZeroPrimitives.Core.Identifiers.FastUlid.Empty, c2.AssetId);
+            Assert.NotEqual(c1.AssetId, c2.AssetId);
+
+            // Clone preserves AssetId
+            var clone = c1.Clone();
+            Assert.Equal(c1.AssetId, clone.AssetId);
+        }
     }
 }

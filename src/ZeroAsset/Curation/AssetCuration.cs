@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ZeroPrimitives.Core.Identifiers;
 
 namespace ZeroAsset.Curation
 {
@@ -22,12 +23,17 @@ namespace ZeroAsset.Curation
     }
 
     /// <summary>
-    /// Represents photographic curation metadata: Rating, Flag, Color Label, and Keywords.
+    /// Represents photographic curation metadata: Rating, Flag, Color Label, Keywords, and unique sortable <see cref="FastUlid"/> AssetId.
     /// Provides value equality and deep cloning.
     /// </summary>
     public sealed class AssetCuration : IEquatable<AssetCuration>
     {
         private int _rating;
+
+        /// <summary>
+        /// Gets or sets the unique, time-ordered 128-bit <see cref="FastUlid"/> identifier for this asset.
+        /// </summary>
+        public FastUlid AssetId { get; set; } = FastUlid.NewUlid();
 
         /// <summary>
         /// Star rating from 0 (unrated) to 5.
@@ -44,12 +50,13 @@ namespace ZeroAsset.Curation
 
         public AssetCuration() { }
 
-        public AssetCuration(int rating, AssetFlag flag = AssetFlag.Unflagged, AssetColorLabel label = AssetColorLabel.None, IEnumerable<string>? keywords = null)
+        public AssetCuration(int rating, AssetFlag flag = AssetFlag.Unflagged, AssetColorLabel label = AssetColorLabel.None, IEnumerable<string>? keywords = null, FastUlid assetId = default)
         {
             Rating = rating;
             Flag = flag;
             ColorLabel = label;
             if (keywords != null) Keywords.AddRange(keywords);
+            AssetId = assetId == default ? FastUlid.NewUlid() : assetId;
         }
 
         /// <summary>
@@ -57,7 +64,7 @@ namespace ZeroAsset.Curation
         /// </summary>
         public AssetCuration Clone()
         {
-            return new AssetCuration(Rating, Flag, ColorLabel, Keywords);
+            return new AssetCuration(Rating, Flag, ColorLabel, Keywords, AssetId);
         }
 
         public bool Equals(AssetCuration? other)
